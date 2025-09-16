@@ -1,7 +1,7 @@
 // app/api/export/route.ts
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { City, Status } from '@/lib/generated/prisma';
+import { City, Status, Prisma } from '@/lib/generated/prisma'; // 👈 ADD PRISMA HERE
 import Papa from 'papaparse';
 
 const EXPORT_COLUMNS = [
@@ -15,9 +15,10 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const searchTerm = searchParams.get('search') ?? '';
     const cityFilter = (searchParams.get('city') as City) ?? undefined;
-    const statusFilter = (searchParams.get('status') as Status) ?? undefined; // <-- TYPO WAS HERE
+    const statusFilter = (searchParams.get('status') as Status) ?? undefined;
 
-    const where = {
+    // 👇 EXPLICITLY TYPE THE 'where' OBJECT
+    const where: Prisma.buyersWhereInput = {
       OR: searchTerm
         ? [
             { fullName: { contains: searchTerm, mode: 'insensitive' } },

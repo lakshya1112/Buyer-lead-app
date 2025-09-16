@@ -1,10 +1,10 @@
 // app/buyers/page.tsx
 
-export const dynamic = 'force-dynamic'; // Fixes the searchParams error
+export const dynamic = 'force-dynamic';
 
 import Link from "next/link";
 import prisma from "@/lib/prisma";
-import { City, Status } from "@/lib/generated/prisma";
+import { City, Status, Prisma } from "@/lib/generated/prisma"; // 👈 ADD PRISMA HERE
 import { SearchBar } from "./components/SearchBar";
 import { FilterSelect } from "./components/FilterSelect";
 import { PaginationControls } from "./components/Pagination";
@@ -34,7 +34,9 @@ export default async function BuyersPage({
   const statusFilter = typeof searchParams.status === 'string' ? (searchParams.status as Status) : undefined;
 
   const pageSize = 10;
-  const where = {
+  
+  // 👇 EXPLICITLY TYPE THE 'where' OBJECT
+  const where: Prisma.buyersWhereInput = {
     OR: searchTerm ? [ { fullName: { contains: searchTerm, mode: "insensitive" } }, { email: { contains: searchTerm, mode: "insensitive" } }, { phone: { contains: searchTerm, mode: "insensitive" } }, ] : undefined,
     city: cityFilter,
     status: statusFilter,
