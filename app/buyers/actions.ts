@@ -7,7 +7,7 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { difference } from "lodash";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
