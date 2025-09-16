@@ -3,6 +3,10 @@
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { City, Status } from "@prisma/client";
+import { SearchBar } from "./components/SearchBar";
+import { LogoutButton } from "./components/LogoutButton";
+import { FilterSelect } from "./components/FilterSelect";
+import { PaginationControls } from "./components/Pagination";
 
 // This is the main component for the buyers list page.
 // It's a Server Component, so it can fetch data directly.
