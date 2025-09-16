@@ -4,13 +4,9 @@ import { notFound } from "next/navigation";
 import { EditLeadForm } from "../components/EditLeadForm";
 import { HistoryPanel } from "../components/HistoryPanel";
 
-interface EditPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default async function EditLeadPage({ params }: EditPageProps) {
+// We removed the old "interface EditPageProps"
+// And we are typing the props directly here 👇
+export default async function EditLeadPage({ params }: { params: { id: string } }) {
   const { id } = params;
 
   // Fetch the lead and its history in parallel
@@ -21,12 +17,12 @@ export default async function EditLeadPage({ params }: EditPageProps) {
     prisma.buyer_history.findMany({
       where: { buyerId: id },
       orderBy: { changedAt: 'desc' },
-      take: 5, // Requirement: last 5 changes
+      take: 5,
     })
   ]);
 
   if (!lead) {
-    notFound(); // If no lead is found, show a 404 page
+    notFound();
   }
 
   return (
@@ -41,15 +37,11 @@ export default async function EditLeadPage({ params }: EditPageProps) {
 
       <main className="p-4 mx-auto md:p-8 max-w-7xl">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {/* Main content: The Edit Form */}
           <div className="p-6 bg-white rounded-lg shadow-md lg:col-span-2">
-            {/* We will create this form next */}
             <EditLeadForm lead={lead} />
           </div>
 
-          {/* Sidebar: The History Panel */}
           <div className="lg:col-span-1">
-            {/* We will create this panel next */}
             <HistoryPanel history={history} />
           </div>
         </div>
