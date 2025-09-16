@@ -1,7 +1,7 @@
 // app/api/export/route.ts
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { City, Status } from '@prisma/client';
+import { City, Status } from '@/lib/generated/prisma';
 import Papa from 'papaparse';
 
 const EXPORT_COLUMNS = [

@@ -1,10 +1,10 @@
 // app/buyers/page.tsx
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // Fixes the searchParams error
 
 import Link from "next/link";
 import prisma from "@/lib/prisma";
-import { City, Status } from "@prisma/client";
+import { City, Status } from "@/lib/generated/prisma";
 import { SearchBar } from "./components/SearchBar";
 import { FilterSelect } from "./components/FilterSelect";
 import { PaginationControls } from "./components/Pagination";
@@ -58,11 +58,9 @@ export default async function BuyersPage({
       
       <main className="p-4 mx-auto max-w-7xl md:p-8">
         <div className="flex items-center justify-end mb-4 space-x-2">
-             {/* 👇 ADD THIS IMPORT LINK */}
-          <Link href="/buyers/import" className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50">
+           <Link href="/buyers/import" className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50">
             Import
           </Link>
-          
           <ExportButton />
           <Link href="/buyers/new" className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
             + Create Lead

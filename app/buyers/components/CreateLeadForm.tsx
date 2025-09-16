@@ -7,7 +7,7 @@ import { z } from "zod";
 import { leadSchema } from "@/lib/schemas";
 import { createLead } from "../actions";
 import { useRouter } from "next/navigation";
-import { Bhk, City, PropertyType, Purpose, Source, Timeline } from "@prisma/client";
+import { Bhk, City, PropertyType, Purpose, Source, Timeline } from "@/lib/generated/prisma";
 
 type FormData = z.infer<typeof leadSchema>;
 

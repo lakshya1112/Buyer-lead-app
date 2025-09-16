@@ -1,6 +1,7 @@
 // lib/schemas.ts
 import { z } from 'zod';
-import { PropertyType, Bhk, Purpose, Timeline, Source, City, Status } from '@prisma/client';
+// 👇 THIS IS THE FIX: We are changing the import path to our local generated client
+import { PropertyType, Bhk, Purpose, Timeline, Source, City, Status } from '@/lib/generated/prisma';
 
 // The base object with all the fields
 const leadObject = {

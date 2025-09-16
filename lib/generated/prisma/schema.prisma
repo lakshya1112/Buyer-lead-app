@@ -1,0 +1,147 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- NEXT-AUTH v4 REQUIRED MODELS ---
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  leads         buyers[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// --- OUR APPLICATION MODELS ---
+enum City {
+  Chandigarh
+  Mohali
+  Zirakpur
+  Panchkula
+  Other
+}
+
+enum PropertyType {
+  Apartment
+  Villa
+  Plot
+  Office
+  Retail
+}
+
+enum Bhk {
+  Studio
+  OneBHK
+  TwoBHK
+  ThreeBHK
+  FourBHK
+  FivePlusBHK
+}
+
+enum Purpose {
+  Buy
+  Rent
+}
+
+enum Timeline {
+  ReadyToMoveIn
+  OneToThreeMonths
+  ThreeToSixMonths
+  Exploring
+}
+
+enum Source {
+  Website
+  Referral
+  WalkIn
+  Call
+  Other
+}
+
+enum Status {
+  New
+  Qualified
+  Contacted
+  Visited
+  Negotiation
+  Converted
+  Dropped
+}
+
+model buyers {
+  id           String          @id @default(uuid())
+  fullName     String
+  email        String?
+  phone        String
+  city         City
+  propertyType PropertyType
+  bhk          Bhk?
+  purpose      Purpose
+  budgetMin    Int?
+  budgetMax    Int?
+  timeline     Timeline
+  source       Source
+  status       Status          @default(New)
+  notes        String?
+  tags         String[]
+  ownerId      String
+  updatedAt    DateTime        @updatedAt
+  owner        User            @relation(fields: [ownerId], references: [id])
+  history      buyer_history[]
+
+  @@map("buyers")
+}
+
+model buyer_history {
+  id        String   @id @default(uuid())
+  buyerId   String
+  changedBy String
+  changedAt DateTime @default(now())
+  diff      Json
+  buyer     buyers   @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+
+  @@map("buyer_history")
+}

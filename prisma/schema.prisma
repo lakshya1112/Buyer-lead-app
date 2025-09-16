@@ -1,6 +1,7 @@
 // prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
 }
 
 datasource db {
@@ -43,7 +44,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  leads         buyers[] // Our custom relation
+  leads         buyers[]
 }
 
 model VerificationToken {
@@ -55,13 +56,60 @@ model VerificationToken {
 }
 
 // --- OUR APPLICATION MODELS ---
-enum City { Chandigarh Mohali Zirakpur Panchkula Other }
-enum PropertyType { Apartment Villa Plot Office Retail }
-enum Bhk { Studio OneBHK TwoBHK ThreeBHK FourBHK FivePlusBHK }
-enum Purpose { Buy Rent }
-enum Timeline { ReadyToMoveIn OneToThreeMonths ThreeToSixMonths Exploring }
-enum Source { Website Referral WalkIn Call Other }
-enum Status { New Qualified Contacted Visited Negotiation Converted Dropped }
+enum City {
+  Chandigarh
+  Mohali
+  Zirakpur
+  Panchkula
+  Other
+}
+
+enum PropertyType {
+  Apartment
+  Villa
+  Plot
+  Office
+  Retail
+}
+
+enum Bhk {
+  Studio
+  OneBHK
+  TwoBHK
+  ThreeBHK
+  FourBHK
+  FivePlusBHK
+}
+
+enum Purpose {
+  Buy
+  Rent
+}
+
+enum Timeline {
+  ReadyToMoveIn
+  OneToThreeMonths
+  ThreeToSixMonths
+  Exploring
+}
+
+enum Source {
+  Website
+  Referral
+  WalkIn
+  Call
+  Other
+}
+
+enum Status {
+  New
+  Qualified
+  Contacted
+  Visited
+  Negotiation
+  Converted
+  Dropped
+}
 
 model buyers {
   id           String        @id @default(uuid())
@@ -83,6 +131,7 @@ model buyers {
   updatedAt    DateTime      @updatedAt
   owner        User          @relation(fields: [ownerId], references: [id])
   history      buyer_history[]
+
   @@map("buyers")
 }
 
@@ -93,5 +142,6 @@ model buyer_history {
   changedAt DateTime @default(now())
   diff      Json
   buyer     buyers   @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+
   @@map("buyer_history")
 }
