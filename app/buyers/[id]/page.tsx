@@ -4,12 +4,15 @@ import { notFound } from "next/navigation";
 import { EditLeadForm } from "../components/EditLeadForm";
 import { HistoryPanel } from "../components/HistoryPanel";
 
-// We removed the old "interface EditPageProps"
-// And we are typing the props directly here 👇
-export default async function EditLeadPage({ params }: { params: { id: string } }) {
+// A more explicit type definition for the page props
+type EditPageProps = {
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
+export default async function EditLeadPage({ params }: EditPageProps) {
   const { id } = params;
 
-  // Fetch the lead and its history in parallel
   const [lead, history] = await Promise.all([
     prisma.buyers.findUnique({
       where: { id },
