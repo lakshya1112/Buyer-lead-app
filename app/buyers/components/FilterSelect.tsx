@@ -30,7 +30,6 @@ export function FilterSelect({
     <select
       onChange={(e) => handleFilterChange(e.target.value)}
       defaultValue={searchParams.get(paramName)?.toString() ?? ""}
-      className="w-full px-3 py-2 border rounded-md"
     >
       <option value="">{placeholder}</option>
       {options.map((option) => (

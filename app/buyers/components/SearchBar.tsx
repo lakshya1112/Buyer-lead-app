@@ -25,7 +25,6 @@ export function SearchBar({ placeholder }: { placeholder: string }) {
       placeholder={placeholder}
       onChange={(e) => handleSearch(e.target.value)}
       defaultValue={searchParams.get("search")?.toString()}
-      className="w-full px-3 py-2 border rounded-md"
     />
   );
 }

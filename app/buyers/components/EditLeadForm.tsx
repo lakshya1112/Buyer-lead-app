@@ -1,17 +1,17 @@
-// app/buyers/components/CreateLeadForm.tsx
+// app/buyers/components/EditLeadForm.tsx
 "use client";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { leadSchema } from "@/lib/schemas";
-import { createLead } from "../actions";
+import { editLeadSchema } from "../actions";
+import { updateLead } from "../actions";
 import { useRouter } from "next/navigation";
-import { Bhk, City, PropertyType, Purpose, Source, Timeline } from "@prisma/client";
+import { buyers, Bhk, City, PropertyType, Purpose, Source, Timeline } from "@prisma/client";
 
-type FormData = z.infer<typeof leadSchema>;
+type FormData = z.infer<typeof editLeadSchema>;
 
-// Reusable component for form fields to reduce repetition
+// Reusable component for form fields
 const FormField = ({ label, name, error, children }: { label: string, name: string, error?: string, children: React.ReactNode }) => (
   <div>
     <label htmlFor={name} className="block text-sm font-medium text-gray-700">{label}</label>
@@ -20,14 +20,35 @@ const FormField = ({ label, name, error, children }: { label: string, name: stri
   </div>
 );
 
-export function CreateLeadForm() {
+export function EditLeadForm({ lead }: { lead: buyers }) {
   const router = useRouter();
-  const { register, handleSubmit, formState: { errors, isSubmitting }, watch } = useForm<FormData>({ resolver: zodResolver(leadSchema) });
+  const { register, handleSubmit, formState: { errors, isSubmitting }, watch } = useForm<FormData>({
+    resolver: zodResolver(editLeadSchema),
+    defaultValues: { // Pre-fill the form with existing lead data
+      ...lead,
+      email: lead.email ?? '',
+      notes: lead.notes ?? '',
+      bhk: lead.bhk ?? undefined,
+      budgetMin: lead.budgetMin ?? undefined,
+      budgetMax: lead.budgetMax ?? undefined,
+      updatedAt: lead.updatedAt.toISOString(), // Critical for concurrency check
+    },
+  });
+
   const watchedPropertyType = watch("propertyType");
-  const onSubmit = async (data: FormData) => { await createLead(data); };
+
+  const onSubmit = async (data: FormData) => {
+    const result = await updateLead(lead.id, data);
+    if (result?.success === false) {
+      alert(result.message); // Show concurrency or validation errors
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* Hidden input for concurrency control */}
+      <input type="hidden" {...register("updatedAt")} />
+
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <FormField label="Full Name *" name="fullName" error={errors.fullName?.message}>
           <input {...register("fullName")} />
@@ -35,6 +56,7 @@ export function CreateLeadForm() {
         <FormField label="Phone *" name="phone" error={errors.phone?.message}>
           <input {...register("phone")} />
         </FormField>
+        {/* ... (all other form fields, same as CreateLeadForm) ... */}
         <FormField label="Email" name="email" error={errors.email?.message}>
           <input {...register("email")} type="email" />
         </FormField>
@@ -79,7 +101,7 @@ export function CreateLeadForm() {
       </FormField>
       <div className="flex justify-end pt-4 space-x-3 border-t">
         <button type="button" onClick={() => router.push('/buyers')} className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50">Cancel</button>
-        <button type="submit" disabled={isSubmitting} className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 disabled:bg-gray-400">{isSubmitting ? "Saving..." : "Create Lead"}</button>
+        <button type="submit" disabled={isSubmitting} className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 disabled:bg-gray-400">{isSubmitting ? "Saving..." : "Save Changes"}</button>
       </div>
     </form>
   );

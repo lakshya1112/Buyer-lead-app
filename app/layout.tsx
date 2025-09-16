@@ -1,9 +1,8 @@
 // app/layout.tsx
-
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Providers from "./providers"; // 👈 IMPORT THE PROVIDER
+import Providers from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,8 +18,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Providers>{children}</Providers> {/* 👈 WRAP CHILDREN */}
+      {/* 👇 Added a subtle background color to the whole app */}
+      <body className={`${inter.className} bg-gray-50 text-gray-800`}>
+        <Providers>
+          <main>{children}</main>
+        </Providers>
       </body>
     </html>
   );

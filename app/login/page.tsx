@@ -1,5 +1,4 @@
 // app/login/page.tsx
-
 "use client";
 
 import { signIn } from "next-auth/react";
@@ -11,20 +10,23 @@ export default function LoginPage() {
   const [email, setEmail] = useState("user@example.com");
   const [password, setPassword] = useState("password");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
     const result = await signIn("credentials", {
-      redirect: false, // Do not redirect automatically, we'll handle it
+      redirect: false,
       email,
       password,
     });
 
+    setIsLoading(false);
+
     if (result?.ok) {
-      // On success, redirect to the main buyers page
-      router.push("/buyers");
+      router.replace("/buyers");
     } else {
       setError("Invalid email or password. Please try again.");
     }
@@ -32,38 +34,40 @@ export default function LoginPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="p-8 bg-white rounded-lg shadow-md w-96">
-        <h1 className="mb-4 text-2xl font-bold text-center">Login</h1>
-        <form onSubmit={handleSubmit}>
-          {error && <p className="mb-4 text-sm text-center text-red-500">{error}</p>}
-          <div className="mb-4">
-            <label className="block mb-2 text-sm font-medium text-gray-700">Email</label>
+      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg">
+        <div className="text-center">
+            <h1 className="text-3xl font-bold text-gray-900">Lead Intake</h1>
+            <p className="text-gray-500">Sign in to your account</p>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {error && <p className="text-sm font-medium text-center text-red-500">{error}</p>}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
               required
             />
           </div>
-          <div className="mb-6">
-            <label className="block mb-2 text-sm font-medium text-gray-700">Password</label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
               required
             />
           </div>
           <button
             type="submit"
-            className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+            disabled={isLoading}
+            className="w-full px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400"
           >
-            Sign In
+            {isLoading ? "Signing In..." : "Sign In"}
           </button>
-          <div className="mt-4 text-sm text-center text-gray-500">
-            <p>Use demo credentials:</p>
+          <div className="p-4 mt-4 text-sm text-center text-gray-600 bg-gray-100 rounded-md">
+            <p className="font-semibold">Use demo credentials:</p>
             <p><strong>Email:</strong> user@example.com</p>
             <p><strong>Password:</strong> password</p>
           </div>
