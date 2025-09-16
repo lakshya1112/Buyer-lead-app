@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mini Buyer Lead Intake App
 
-## Getting Started
+This is a full-stack web application built to capture, list, manage, and export buyer leads. The project was created as a technical assignment to demonstrate skills in modern web development practices, including Next.js, TypeScript, database management with Prisma, and secure authentication.
 
-First, run the development server:
+---
+
+## ✨ Features
+
+-   **🔐 Authentication**: Secure demo login system using `next-auth@4`. All pages are protected.
+-   **✅ Full CRUD Functionality**: Create, Read, Update, and Delete (soft delete via 'Dropped' status) buyer leads.
+-   **⚡ Server-Side Rendering**: The main leads list is server-rendered for fast initial page loads.
+-   **🔍 Search & Filtering**: URL-synced, debounced search (by name, email, phone) and filtering (by city, status).
+-   **📄 Pagination**: Efficient server-side pagination for handling large datasets.
+-   **🔒 Ownership & Security**: Users can only edit or delete their own leads.
+-   **⏱️ Concurrency Control**: Prevents users from overwriting each other's edits with a stale-data check.
+-   **📜 Change History**: The last 5 changes for each lead are displayed on the edit page.
+-   **🔄 Import & Export**:
+    -   Export the current filtered list of leads to a CSV file.
+    -   Import leads from a CSV file with per-row validation and error reporting.
+-   **🛡️ Rate Limiting**: Server Actions for creating and updating leads are rate-limited to prevent abuse.
+-   **🧪 Unit Testing**: Includes a unit test suite set up with Vitest.
+
+---
+
+## 🛠️ Tech Stack
+
+-   **Framework**: [Next.js](https://nextjs.org/) 15 (App Router)
+-   **Language**: [TypeScript](https://www.typescriptlang.org/)
+-   **Database ORM**: [Prisma](https://www.prisma.io/)
+-   **Database**: [PostgreSQL](https://www.postgresql.org/) (via Supabase)
+-   **Authentication**: [NextAuth.js v4](https://next-auth.js.org/)
+-   **Validation**: [Zod](https://zod.dev/)
+-   **UI**: [Tailwind CSS](https://tailwindcss.com/)
+-   **Form Management**: [React Hook Form](https://react-hook-form.com/)
+-   **Testing**: [Vitest](https://vitest.dev/)
+-   **Rate Limiting**: [Upstash Redis](https://upstash.com/)
+
+---
+
+## 🚀 Getting Started
+
+Follow these instructions to get the project running on your local machine.
+
+### Prerequisites
+
+-   [Node.js](https://nodejs.org/) (v18 or later recommended)
+-   [npm](https://www.npmjs.com/)
+-   A free [Supabase](https://supabase.com/) account for the PostgreSQL database.
+-   A free [Upstash](https://upstash.com/) account for Redis rate limiting.
+
+### 1. Clone the Repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+git clone [https://github.com/your-username/buyer-lead-app.git](https://github.com/your-username/buyer-lead-app.git)
+cd buyer-lead-app

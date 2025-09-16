@@ -1,4 +1,7 @@
 // app/buyers/page.tsx
+
+export const dynamic = 'force-dynamic';
+
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { City, Status } from "@prisma/client";
@@ -6,8 +9,8 @@ import { SearchBar } from "./components/SearchBar";
 import { FilterSelect } from "./components/FilterSelect";
 import { PaginationControls } from "./components/Pagination";
 import { LogoutButton } from "./components/LogoutButton";
+import { ExportButton } from './components/ExportButton';
 
-// A small helper to get a color for the status badge
 const getStatusColor = (status: Status) => {
   switch (status) {
     case 'New': return 'bg-blue-100 text-blue-800';
@@ -23,12 +26,13 @@ const getStatusColor = (status: Status) => {
 export default async function BuyersPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const page = parseInt(searchParams.page ?? "1", 10);
-  const searchTerm = searchParams.search ?? "";
-  const cityFilter = (searchParams.city as City) ?? undefined;
-  const statusFilter = (searchParams.status as Status) ?? undefined;
+  const page = typeof searchParams.page === 'string' ? parseInt(searchParams.page, 10) : 1;
+  const searchTerm = typeof searchParams.search === 'string' ? searchParams.search : "";
+  const cityFilter = typeof searchParams.city === 'string' ? (searchParams.city as City) : undefined;
+  const statusFilter = typeof searchParams.status === 'string' ? (searchParams.status as Status) : undefined;
+
   const pageSize = 10;
   const where = {
     OR: searchTerm ? [ { fullName: { contains: searchTerm, mode: "insensitive" } }, { email: { contains: searchTerm, mode: "insensitive" } }, { phone: { contains: searchTerm, mode: "insensitive" } }, ] : undefined,
@@ -53,7 +57,13 @@ export default async function BuyersPage({
       </header>
       
       <main className="p-4 mx-auto max-w-7xl md:p-8">
-        <div className="flex justify-end mb-4">
+        <div className="flex items-center justify-end mb-4 space-x-2">
+             {/* 👇 ADD THIS IMPORT LINK */}
+          <Link href="/buyers/import" className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50">
+            Import
+          </Link>
+          
+          <ExportButton />
           <Link href="/buyers/new" className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
             + Create Lead
           </Link>

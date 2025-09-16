@@ -1,6 +1,8 @@
 // lib/prisma.ts
 import { PrismaClient } from '@prisma/client'
 
+console.log("Attempting to initialize Prisma Client...");
+
 const prismaClientSingleton = () => {
   return new PrismaClient()
 }
@@ -10,6 +12,8 @@ declare global {
 }
 
 const prisma = globalThis.prisma ?? prismaClientSingleton()
+
+console.log("Prisma Client initialized successfully.");
 
 export default prisma
 

@@ -4,7 +4,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { editLeadSchema } from "../actions";
+import { editLeadSchema } from "@/lib/schemas";
 import { updateLead } from "../actions";
 import { useRouter } from "next/navigation";
 import { buyers, Bhk, City, PropertyType, Purpose, Source, Timeline } from "@prisma/client";

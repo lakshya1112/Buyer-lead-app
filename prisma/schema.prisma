@@ -1,6 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
+// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,109 +8,90 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ENUMS: Defining the allowed options for certain fields
-enum City {
-  Chandigarh
-  Mohali
-  Zirakpur
-  Panchkula
-  Other
+// --- NEXT-AUTH v4 REQUIRED MODELS ---
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }
 
-enum PropertyType {
-  Apartment
-  Villa
-  Plot
-  Office
-  Retail
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-enum Bhk {
-  Studio
-  OneBHK
-  TwoBHK
-  ThreeBHK
-  FourBHK
-  FivePlusBHK
-}
-
-enum Purpose {
-  Buy
-  Rent
-}
-
-enum Timeline {
-  ReadyToMoveIn
-  OneToThreeMonths
-  ThreeToSixMonths
-  Exploring
-}
-
-enum Source {
-  Website
-  Referral
-  WalkIn
-  Call
-  Other
-}
-
-enum Status {
-  New
-  Qualified
-  Contacted
-  Visited
-  Negotiation
-  Converted
-  Dropped
-}
-
-// MODELS: Defining our database tables
-
-// This is a simple model for our users
 model User {
-  id    String   @id @default(uuid())
-  email String   @unique
-  name  String?
-  leads buyers[] // A user can have many leads
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  leads         buyers[] // Our custom relation
 }
 
-// This is the main table for our buyer leads
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// --- OUR APPLICATION MODELS ---
+enum City { Chandigarh Mohali Zirakpur Panchkula Other }
+enum PropertyType { Apartment Villa Plot Office Retail }
+enum Bhk { Studio OneBHK TwoBHK ThreeBHK FourBHK FivePlusBHK }
+enum Purpose { Buy Rent }
+enum Timeline { ReadyToMoveIn OneToThreeMonths ThreeToSixMonths Exploring }
+enum Source { Website Referral WalkIn Call Other }
+enum Status { New Qualified Contacted Visited Negotiation Converted Dropped }
+
 model buyers {
-  id           String       @id @default(uuid())
+  id           String        @id @default(uuid())
   fullName     String
   email        String?
   phone        String
   city         City
   propertyType PropertyType
-  bhk          Bhk? // The '?' makes this field optional
+  bhk          Bhk?
   purpose      Purpose
   budgetMin    Int?
   budgetMax    Int?
   timeline     Timeline
   source       Source
-  status       Status       @default(New)
+  status       Status        @default(New)
   notes        String?
-  tags         String[] // Array of strings
+  tags         String[]
   ownerId      String
-  updatedAt    DateTime     @updatedAt
-
-  // --- Relationships ---
-  owner   User            @relation(fields: [ownerId], references: [id])
-  history buyer_history[]
-
-  @@map("buyers") // This explicitly names the table "buyers" in the database
+  updatedAt    DateTime      @updatedAt
+  owner        User          @relation(fields: [ownerId], references: [id])
+  history      buyer_history[]
+  @@map("buyers")
 }
 
-// This table will store a log of all changes made to a lead
 model buyer_history {
-  id         String   @id @default(uuid())
-  buyerId    String
-  changedBy  String // We'll store the user's email or ID here
-  changedAt  DateTime @default(now())
-  diff       Json // Stores a JSON object of what was changed
-
-  // --- Relationships ---
-  buyer buyers @relation(fields: [buyerId], references: [id], onDelete: Cascade)
-
+  id        String   @id @default(uuid())
+  buyerId   String
+  changedBy String
+  changedAt DateTime @default(now())
+  diff      Json
+  buyer     buyers   @relation(fields: [buyerId], references: [id], onDelete: Cascade)
   @@map("buyer_history")
 }
